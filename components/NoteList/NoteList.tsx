@@ -25,8 +25,8 @@ const NoteList = ({ notes }: NoteListProps) => {
 
   return (
     <ul className={css.list}>
-      {notes.map(note => { // <-- Змінив синтаксис
-        console.log('ID нотатки:', note.id); // <-- ДОДАЙ ЦЮ ЛІНІЮ
+      {notes.map(note => { 
+        console.log('ID нотатки:', note.id); 
 
         return (
           <li key={note.id} className={css.listItem}>
