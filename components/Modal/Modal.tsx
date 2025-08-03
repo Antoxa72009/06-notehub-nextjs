@@ -1,15 +1,15 @@
-'use client'; // <-- Ця директива обов'язкова для клієнтських компонентів
+'use client'; 
 
 import { type ReactNode, useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import css from './NoteModal.module.css';
 
-interface NoteModalProps {
+interface ModalProps {
   children: ReactNode;
   onClose: () => void;
 }
 
-const NoteModal = ({ children, onClose }: NoteModalProps) => {
+const NoteModal = ({ children, onClose }: ModalProps) => {
   const [isMounted, setIsMounted] = useState(false);
   useEffect(() => {
     setIsMounted(true);

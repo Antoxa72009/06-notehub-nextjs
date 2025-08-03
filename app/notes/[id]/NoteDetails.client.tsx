@@ -3,15 +3,17 @@
 import { useQuery } from '@tanstack/react-query';
 import { fetchNoteById } from '@/lib/api';
 import css from './NoteDetails.module.css';
+import { type Note } from '@/types/note'; 
 
-interface NoteDetailsPageProps {
+interface NoteDetailsProps {
   id: string;
 }
 
-const NoteDetailsPage = ({ id }: NoteDetailsPageProps) => {
-  const { data: note, isLoading, isError } = useQuery({
+const NoteDetails = ({ id }: NoteDetailsProps) => {  
+  const { data: note, isLoading, isError } = useQuery<Note>({
     queryKey: ['note', id],
     queryFn: () => fetchNoteById(id),
+    refetchOnMount: false,
   });
 
   if (isLoading) {
@@ -35,4 +37,4 @@ const NoteDetailsPage = ({ id }: NoteDetailsPageProps) => {
   );
 };
 
-export default NoteDetailsPage;
+export default NoteDetails;

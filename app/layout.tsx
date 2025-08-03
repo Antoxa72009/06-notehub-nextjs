@@ -18,13 +18,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <Header />
         <TanStackProvider>
+          <Header />
           <main>
             {children}
           </main>
+          <Footer />
         </TanStackProvider>
-        <Footer />
         <div id="modal-root" />
       </body>
     </html>

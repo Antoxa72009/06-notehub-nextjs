@@ -1,5 +1,7 @@
+'use client';
+
 import ReactPaginate from 'react-paginate';
-import styles from './Pagination.module.css';
+import css from './Pagination.module.css';
 
 interface PaginationProps {
   pageCount: number;
@@ -8,33 +10,32 @@ interface PaginationProps {
 }
 
 const Pagination = ({ pageCount, currentPage, onPageChange }: PaginationProps) => {
-  const handlePageClick = (event: { selected: number }) => {
-    onPageChange(event.selected + 1);
+  const handlePageClick = ({ selected }: { selected: number }) => {
+    if (selected !== currentPage) {
+      onPageChange(selected);
+    }
   };
 
   return (
-    <div
-      onClick={(e) => {
-        const target = e.target as HTMLElement;        
-        if (target.closest(`.${styles.pagination} a`)) {
-          e.preventDefault(); 
-        }
-      }}
-    >
-      <ReactPaginate
-        pageCount={pageCount}
-        forcePage={currentPage - 1}
-        onPageChange={handlePageClick}
-        containerClassName={styles.pagination} 
-        pageLinkClassName={styles['page-link']} 
-        activeClassName={styles.active} 
-        previousLabel="<"
-        nextLabel=">"
-        breakLabel="..."
-        marginPagesDisplayed={1}
-        pageRangeDisplayed={2}
-      />
-    </div>
+    <ReactPaginate
+      breakLabel="..."
+      nextLabel=">"
+      onPageChange={handlePageClick}
+      pageRangeDisplayed={3}
+      marginPagesDisplayed={1}
+      pageCount={pageCount}
+      forcePage={currentPage}
+      previousLabel="<"
+      containerClassName={css.pagination}
+      pageClassName={css.pageItem}
+      pageLinkClassName={css.pageLink}
+      previousClassName={css.pageItem}
+      nextClassName={css.pageItem}
+      previousLinkClassName={css.pageLink}
+      nextLinkClassName={css.pageLink}
+      activeClassName={css.active}
+      disabledClassName={css.disabled}
+    />
   );
 };
 

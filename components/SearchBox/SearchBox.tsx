@@ -1,9 +1,8 @@
-import type { ChangeEvent } from 'react';
 import css from './SearchBox.module.css';
 
 interface SearchBoxProps {
   value: string;
-  onChange: (e: ChangeEvent<HTMLInputElement>) => void;
+  onChange: (value: string) => void; // <-- Оновлений тип: отримує лише рядок
 }
 
 const SearchBox = ({ value, onChange }: SearchBoxProps) => {
@@ -13,7 +12,7 @@ const SearchBox = ({ value, onChange }: SearchBoxProps) => {
       type="text"
       placeholder="Search notes"
       value={value}
-      onChange={onChange}
+      onChange={(e) => onChange(e.target.value)} // <-- Викликаємо onChange зі значенням
     />
   );
 };

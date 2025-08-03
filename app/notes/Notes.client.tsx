@@ -1,39 +1,65 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { fetchNotes } from '@/lib/api';
 import NoteList from '@/components/NoteList/NoteList';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Pagination from '@/components/Pagination/Pagination';
-import NoteModal from '@/components/Modal/NoteModal';
+import NoteModal from '@/components/Modal/Modal';
 import NoteForm from '@/components/NoteForm/NoteForm';
 import { useDebounce } from '@/hooks/useDebounce';
 import css from './NotesPage.module.css';
+import { type Note } from '@/types/note';
 
-const NotesPage = () => {
-  const [page, setPage] = useState(1);
+interface NotesProps {
+  initialNotes: Note[];
+  initialPage: number;
+  initialTotalPages: number;
+  initialTotalNotes: number;
+}
+
+const Notes = ({
+  initialNotes,
+  initialPage,
+  initialTotalPages,
+  initialTotalNotes,
+}: NotesProps) => {
+  const [page, setPage] = useState(initialPage);
   const [search, setSearch] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const debouncedSearch = useDebounce(search, 500);
-  
+
+  const handlePageChange = useCallback((selectedPage: number) => {
+    setPage(selectedPage);
+  }, []);
+
+  const handleSearchChange = useCallback((value: string) => {
+    setSearch(value);
+    setPage(1);
+  }, []);
+
+  const handleOpenModal = useCallback(() => {
+    setIsModalOpen(true);
+  }, []);
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+  }, []);
+
   const { data } = useQuery({
     queryKey: ['notes', page, debouncedSearch],
     queryFn: () => fetchNotes({ page, perPage: 12, search: debouncedSearch }),
-    placeholderData: () => ({
-      notes: [],
-      page,
+    initialData: {
+      notes: initialNotes,
+      page: initialPage,
       perPage: 12,
-      totalPages: 1,
-      totalNotes: 0,
-    }),
+      totalPages: initialTotalPages,
+      totalNotes: initialTotalNotes,
+    },
+    refetchOnMount: false,
   });
-
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearch(e.target.value);
-    setPage(1);
-  };
 
   const notes = data?.notes ?? [];
   const totalPages = data?.totalPages ?? 1;
@@ -42,10 +68,16 @@ const NotesPage = () => {
     <div className={css.notesPage}>
       <header className={css.toolbar}>
         <SearchBox value={search} onChange={handleSearchChange} />
+
         {totalPages > 1 && (
-          <Pagination pageCount={totalPages} currentPage={page} onPageChange={setPage} />
+          <Pagination
+            pageCount={totalPages}
+            currentPage={page}
+            onPageChange={handlePageChange}
+          />
         )}
-        <button className={css.button} onClick={() => setIsModalOpen(true)}>
+
+        <button className={css.button} onClick={handleOpenModal}>
           Create note +
         </button>
       </header>
@@ -59,12 +91,12 @@ const NotesPage = () => {
       )}
 
       {isModalOpen && (
-        <NoteModal onClose={() => setIsModalOpen(false)}>
-          <NoteForm onCancel={() => setIsModalOpen(false)} />
+        <NoteModal onClose={handleCloseModal}>
+          <NoteForm onCancel={handleCloseModal} />
         </NoteModal>
       )}
     </div>
   );
 };
 
-export default NotesPage;
+export default Notes;
