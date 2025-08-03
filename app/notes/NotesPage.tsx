@@ -6,7 +6,7 @@ import { fetchNotes } from '@/lib/api/api';
 import NoteList from '@/components/NoteList/NoteList';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Pagination from '@/components/Pagination/Pagination';
-import NoteModal from '@/components/NoteModal/NoteModal';
+import NoteModal from '@/components/Modal/NoteModal';
 import NoteForm from '@/components/NoteForm/NoteForm';
 import { useDebounce } from '@/hooks/useDebounce';
 import css from './NotesPage.module.css';
