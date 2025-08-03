@@ -1,9 +1,9 @@
 import type { Note } from '@/types/note';
 import css from './NoteList.module.css';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { deleteNote } from '@/lib/api/api';
+import { deleteNote } from '@/lib/api';
 import { AxiosError } from 'axios';
-import type { ErrorResponse } from '@/lib/api/api';
+import type { ErrorResponse } from '@/lib/api';
 import Link from 'next/link'; 
 
 interface NoteListProps {
