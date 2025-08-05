@@ -58,6 +58,7 @@ const Notes = ({
       totalPages: initialTotalPages,
       totalNotes: initialTotalNotes,
     },
+    placeholderData: (previousData) => previousData,
     refetchOnMount: false,
   });
 
