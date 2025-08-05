@@ -77,7 +77,6 @@ const Notes = ({
             onPageChange={handlePageChange}
           />
         )}
-
         <button className={css.button} onClick={handleOpenModal}>
           Create note +
         </button>
