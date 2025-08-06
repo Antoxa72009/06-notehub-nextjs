@@ -8,7 +8,7 @@ import SearchBox from '@/components/SearchBox/SearchBox';
 import Pagination from '@/components/Pagination/Pagination';
 import NoteModal from '@/components/Modal/Modal';
 import NoteForm from '@/components/NoteForm/NoteForm';
-import { useDebounce } from '@/hooks/useDebounce';
+import { useDebouncedCallback } from 'use-debounce';
 import css from './NotesPage.module.css';
 
 interface NotesProps {
@@ -17,14 +17,12 @@ interface NotesProps {
 
 const Notes = ({ initialData }: NotesProps) => {
   const [page, setPage] = useState(1);
-  const [search, setSearch] = useState(" ");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const debouncedSearch = useDebounce(search, 500);
+  const [search, setSearch] = useState("");
+  const [isModalOpen, setIsModalOpen] = useState(false);  
 
   const { data } = useQuery({
-    queryKey: ['notes', page, debouncedSearch],
-    queryFn: () => fetchNotes({ page, perPage: 12, search: debouncedSearch }),
+    queryKey: ['notes', page, search],
+    queryFn: () => fetchNotes({ page, perPage: 12, search }),
     initialData: initialData,    
     placeholderData: (previousData) => previousData,
   });
@@ -32,13 +30,13 @@ const Notes = ({ initialData }: NotesProps) => {
   const notes = data?.notes ?? [];
   const totalPages = data?.totalPages ?? 1;
 
-  const handlePageChange = (selectedPage: number) => {
-    setPage(selectedPage);
-  };
-
-  const handleSearchChange = (value: string) => {
+  const handleSearchChange = useDebouncedCallback((value: string) => {
     setSearch(value);
     setPage(1);
+  }, 500);
+
+  const handlePageChange = (selectedPage: number) => {
+    setPage(selectedPage);
   };
 
   const handleOpenModal = () => {
@@ -52,7 +50,7 @@ const Notes = ({ initialData }: NotesProps) => {
   return (
     <div className={css.notesPage}>
       <header className={css.toolbar}>
-        <SearchBox value={search} onChange={handleSearchChange} />
+        <SearchBox onChange={handleSearchChange} />
 
         {totalPages > 1 && (
           <Pagination
