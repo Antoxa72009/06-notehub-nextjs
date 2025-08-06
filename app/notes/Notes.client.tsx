@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useCallback } from 'react';
+import { useState, } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { fetchNotes } from '@/lib/api';
+import { fetchNotes, FetchNotesResponse } from '@/lib/api';
 import NoteList from '@/components/NoteList/NoteList';
 import SearchBox from '@/components/SearchBox/SearchBox';
 import Pagination from '@/components/Pagination/Pagination';
@@ -10,60 +10,44 @@ import NoteModal from '@/components/Modal/Modal';
 import NoteForm from '@/components/NoteForm/NoteForm';
 import { useDebounce } from '@/hooks/useDebounce';
 import css from './NotesPage.module.css';
-import { type Note } from '@/types/note';
 
 interface NotesProps {
-  initialNotes: Note[];
-  initialPage: number;
-  initialTotalPages: number;
-  initialTotalNotes: number;
+  initialData: FetchNotesResponse;
 }
 
-const Notes = ({
-  initialNotes,
-  initialPage,
-  initialTotalPages,
-  initialTotalNotes,
-}: NotesProps) => {
-  const [page, setPage] = useState(initialPage);
-  const [search, setSearch] = useState('');
+const Notes = ({ initialData }: NotesProps) => {
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState(" ");
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const debouncedSearch = useDebounce(search, 500);
 
-  const handlePageChange = useCallback((selectedPage: number) => {
-    setPage(selectedPage);
-  }, []);
-
-  const handleSearchChange = useCallback((value: string) => {
-    setSearch(value);
-    setPage(1);
-  }, []);
-
-  const handleOpenModal = useCallback(() => {
-    setIsModalOpen(true);
-  }, []);
-
-  const handleCloseModal = useCallback(() => {
-    setIsModalOpen(false);
-  }, []);
-
   const { data } = useQuery({
     queryKey: ['notes', page, debouncedSearch],
     queryFn: () => fetchNotes({ page, perPage: 12, search: debouncedSearch }),
-    initialData: {
-      notes: initialNotes,
-      page: initialPage,
-      perPage: 12,
-      totalPages: initialTotalPages,
-      totalNotes: initialTotalNotes,
-    },
-    refetchOnMount: false,
+    initialData: initialData,    
     placeholderData: (previousData) => previousData,
   });
 
   const notes = data?.notes ?? [];
   const totalPages = data?.totalPages ?? 1;
+
+  const handlePageChange = (selectedPage: number) => {
+    setPage(selectedPage);
+  };
+
+  const handleSearchChange = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
 
   return (
     <div className={css.notesPage}>

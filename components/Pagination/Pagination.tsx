@@ -11,28 +11,20 @@ interface PaginationProps {
 
 const Pagination = ({ pageCount, currentPage, onPageChange }: PaginationProps) => {
   const handlePageClick = ({ selected }: { selected: number }) => {
-    if (selected !== currentPage) {
-      onPageChange(selected);
-    }
+    onPageChange(selected + 1);
   };
 
   return (
     <ReactPaginate
       breakLabel="..."
       nextLabel=">"
+      previousLabel="<"
       onPageChange={handlePageClick}
       pageRangeDisplayed={3}
       marginPagesDisplayed={1}
       pageCount={pageCount}
-      forcePage={currentPage}
-      previousLabel="<"
+      forcePage={currentPage - 1}
       containerClassName={css.pagination}
-      pageClassName={css.pageItem}
-      pageLinkClassName={css.pageLink}
-      previousClassName={css.pageItem}
-      nextClassName={css.pageItem}
-      previousLinkClassName={css.pageLink}
-      nextLinkClassName={css.pageLink}
       activeClassName={css.active}
       disabledClassName={css.disabled}
     />
